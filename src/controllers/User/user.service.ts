@@ -2,7 +2,6 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
-  HttpException,
   ForbiddenException,
 } from '@nestjs/common';
 import { CreateUserDto, UpdatePasswordDto, User } from './interfaces';
