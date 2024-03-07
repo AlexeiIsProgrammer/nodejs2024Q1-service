@@ -1,30 +1,61 @@
-// favorites.service.ts
 import {
   Injectable,
   NotFoundException,
   BadRequestException,
   HttpStatus,
   HttpException,
+  Inject,
+  forwardRef,
 } from '@nestjs/common';
 import { Artist } from '../Artists/interfaces';
 import { Album } from '../Albums/interfaces';
 import { Track } from '../Tracks/interfaces';
 import { validate } from 'uuid';
+import { AlbumService } from '../Albums/album.service';
+import { TrackService } from '../Tracks/track.service';
+import { ArtistService } from '../Artists/artist.service';
 
 @Injectable()
 export class FavoritesService {
+  constructor(
+    @Inject(forwardRef(() => AlbumService))
+    private readonly albumService: AlbumService,
+    @Inject(forwardRef(() => TrackService))
+    private readonly trackService: TrackService,
+    @Inject(forwardRef(() => ArtistService))
+    private readonly artistService: ArtistService,
+  ) {}
+
   private favorites: { artists: Artist[]; albums: Album[]; tracks: Track[] } = {
     artists: [],
     albums: [],
     tracks: [],
   };
 
+  async removeArtistFromFavorites(artistId: string): Promise<void> {
+    this.favorites.artists = this.favorites.artists.filter(
+      (artist) => artist.id !== artistId,
+    );
+  }
+
+  async removeAlbumFromFavorites(albumId: string): Promise<void> {
+    this.favorites.albums = this.favorites.albums.filter(
+      (album) => album.id !== albumId,
+    );
+  }
+
+  async removeTrackFromFavorites(trackId: string): Promise<void> {
+    this.favorites.tracks = this.favorites.tracks.filter(
+      (track) => track.id !== trackId,
+    );
+  }
+
   findAll() {
     return this.favorites;
   }
 
   addToFavoritesTrack(id: string) {
-    const track = this.favorites.tracks.find((track) => track.id === id);
+    const track = this.trackService.findAll().find((track) => track.id === id);
     if (!validate(id)) {
       throw new BadRequestException('UUID is not valid');
     }
@@ -52,7 +83,7 @@ export class FavoritesService {
   }
 
   addToFavoritesAlbum(id: string) {
-    const album = this.favorites.albums.find((album) => album.id === id);
+    const album = this.albumService.findAll().find((album) => album.id === id);
     if (!validate(id)) {
       throw new BadRequestException('UUID is not valid');
     }
@@ -80,7 +111,11 @@ export class FavoritesService {
   }
 
   addToFavoritesArtist(id: string) {
-    const artist = this.favorites.artists.find((artist) => artist.id === id);
+    console.log(this.artistService.findAll());
+
+    const artist = this.artistService
+      .findAll()
+      .find((artist) => artist.id === id);
     if (!validate(id)) {
       throw new BadRequestException('UUID is not valid');
     }

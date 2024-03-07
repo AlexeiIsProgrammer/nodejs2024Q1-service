@@ -2,13 +2,39 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  forwardRef,
+  Inject,
 } from '@nestjs/common';
 import { Track, CreateTrackDto } from './interfaces';
 import { v4 as uuid, validate } from 'uuid';
+import { FavoritesService } from '../Favorites/favorites.service';
 
 @Injectable()
 export class TrackService {
-  private readonly tracks: Track[] = [];
+  constructor(
+    @Inject(forwardRef(() => FavoritesService))
+    private readonly favoritesService: FavoritesService,
+  ) {}
+
+  private tracks: Track[] = [];
+
+  async updateArtistReferences(
+    artistId: string,
+    newArtistId: string | null,
+  ): Promise<void> {
+    this.tracks = this.tracks.map((track) =>
+      track.artistId === artistId ? { ...track, artistId: newArtistId } : track,
+    );
+  }
+
+  async updateAlbumReferences(
+    albumId: string,
+    newAlbumId: string | null,
+  ): Promise<void> {
+    this.tracks = this.tracks.map((track) =>
+      track.albumId === albumId ? { ...track, albumId: newAlbumId } : track,
+    );
+  }
 
   findAll(): Track[] {
     return this.tracks;
@@ -49,7 +75,7 @@ export class TrackService {
     return this.tracks[index];
   }
 
-  remove(id: string): void {
+  async remove(id: string): Promise<void> {
     const index = this.tracks.findIndex((track) => track.id === id);
     if (!validate(id)) {
       throw new BadRequestException('UUID is not valid');
@@ -57,6 +83,9 @@ export class TrackService {
     if (index === -1) {
       throw new NotFoundException('Track not found');
     }
+
+    await this.favoritesService.removeTrackFromFavorites(id);
+
     this.tracks.splice(index, 1);
   }
 }
