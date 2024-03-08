@@ -1,71 +1,31 @@
-import {
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateUserDto, UpdatePasswordDto, User } from './interfaces';
-import { v4 as uuid, validate } from 'uuid';
+import { DbService } from '../db/db.service';
 
 @Injectable()
 export class UserService {
-  private readonly users: User[] = [];
+  constructor(private readonly db: DbService) {}
 
-  findAll(): User[] {
-    return this.users;
+  getAll(): User[] {
+    return this.db.getAllUsers();
   }
 
-  findOne(id: string): User {
-    const user = this.users.find((user) => user.id === id);
-    if (!validate(id)) {
-      throw new BadRequestException('UUID is not valid');
-    }
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-    return user;
+  getById(id: string): User {
+    return this.db.getUserById(id);
   }
 
-  create(createUserDto: CreateUserDto): User {
-    if (!createUserDto.login || !createUserDto.password) {
-      throw new BadRequestException('Login and password are required');
-    }
-    const newUser: User = {
-      id: uuid(),
-      ...createUserDto,
-      version: 1,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-    };
-    this.users.push(newUser);
-    return newUser;
+  create(createUserDto: CreateUserDto): Omit<User, 'password'> {
+    return this.db.createUser(createUserDto);
   }
 
-  updatePassword(id: string, updatePasswordDto: UpdatePasswordDto): User {
-    const user = this.findOne(id);
-    if (!validate(id)) {
-      throw new BadRequestException('UUID is not valid');
-    }
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-    if (user.password !== updatePasswordDto.oldPassword) {
-      throw new ForbiddenException('Old password is incorrect');
-    }
-    user.password = updatePasswordDto.newPassword;
-    user.version++;
-    user.updatedAt = Date.now();
-    return user;
+  update(
+    id: string,
+    updatePasswordDto: UpdatePasswordDto,
+  ): Omit<User, 'password'> {
+    return this.db.updateUser(id, updatePasswordDto);
   }
 
-  remove(id: string): void {
-    const index = this.users.findIndex((user) => user.id === id);
-    if (!validate(id)) {
-      throw new BadRequestException('UUID is not valid');
-    }
-    if (index === -1) {
-      throw new NotFoundException('User not found');
-    }
-    this.users.splice(index, 1);
+  delete(id: string): void {
+    return this.db.deleteUser(id);
   }
 }

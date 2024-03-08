@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { SharedModule } from 'src/Shared/shared.module';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
+import { DbModule } from '../db/db.module';
 
 @Module({
-  imports: [SharedModule],
+  imports: [DbModule],
   controllers: [UserController],
   providers: [UserService],
 })

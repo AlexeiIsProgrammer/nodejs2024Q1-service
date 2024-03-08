@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { AlbumController } from './album.controller';
 import { AlbumService } from './album.service';
-import { SharedModule } from 'src/Shared/shared.module';
+import { DbModule } from '../db/db.module';
 
 @Module({
-  imports: [SharedModule],
+  imports: [DbModule],
   controllers: [AlbumController],
   providers: [AlbumService],
 })

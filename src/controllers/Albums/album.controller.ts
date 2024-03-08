@@ -6,36 +6,42 @@ import {
   Body,
   Put,
   Delete,
+  HttpCode,
 } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './interfaces';
+import { StatusCodes } from 'http-status-codes';
 
 @Controller('album')
 export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
 
   @Get()
-  findAll() {
-    return this.albumService.findAll();
+  getAll() {
+    return this.albumService.getAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.albumService.findOne(id);
+  @HttpCode(StatusCodes.OK)
+  getById(@Param('id') id: string) {
+    return this.albumService.getById(id);
   }
 
   @Post()
+  @HttpCode(StatusCodes.CREATED)
   create(@Body() createAlbumDto: CreateAlbumDto) {
     return this.albumService.create(createAlbumDto);
   }
 
   @Put(':id')
+  @HttpCode(StatusCodes.OK)
   update(@Param('id') id: string, @Body() updateAlbumDto: CreateAlbumDto) {
     return this.albumService.update(id, updateAlbumDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.albumService.remove(id);
+  @HttpCode(StatusCodes.NO_CONTENT)
+  delete(@Param('id') id: string) {
+    return this.albumService.delete(id);
   }
 }
