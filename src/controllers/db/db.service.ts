@@ -12,9 +12,11 @@ import { Artist, CreateArtistDto } from '../Artists/interfaces';
 import { v4 as uuid } from 'uuid';
 import { CreateTrackDto, Track } from '../Tracks/interfaces';
 import { CreateUserDto, UpdatePasswordDto, User } from '../User/interfaces';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class DbService {
+  constructor(private readonly prismaService: PrismaService) {}
   private albums: Album[] = [];
 
   updateArtistReferencesInAlbums(
@@ -26,7 +28,7 @@ export class DbService {
     );
   }
 
-  updateArtistReferencesInTracks(
+  async updateArtistReferencesInTracks(
     artistId: string,
     newArtistId: string | null,
   ): void {
@@ -35,8 +37,8 @@ export class DbService {
     );
   }
 
-  getAllAlbums(): Album[] {
-    return this.albums;
+  async getAllAlbums(): Promise<Album[]> {
+    return await this.prismaService.albums.findMany();
   }
 
   getAlbumById(id: string): Album {

@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:13.5
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=qwerty
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - '4000:5432'
+volumes:
+  postgres:
