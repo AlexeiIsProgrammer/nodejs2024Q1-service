@@ -6,23 +6,23 @@ import { DbService } from '../db/db.service';
 export class ArtistService {
   constructor(private readonly db: DbService) {}
 
-  getAll(): Artist[] {
+  async getAll(): Promise<Artist[]> {
     return this.db.getAllArtists();
   }
 
-  getById(id: string): Artist {
+  async getById(id: string): Promise<Artist> {
     return this.db.getArtistById(id);
   }
 
-  create(createArtistDto: CreateArtistDto): Artist {
+  async create(createArtistDto: CreateArtistDto): Promise<Artist> {
     return this.db.createArtist(createArtistDto);
   }
 
-  update(id: string, updateArtistDto: CreateArtistDto): Artist {
+  async update(id: string, updateArtistDto: CreateArtistDto): Promise<Artist> {
     return this.db.updateArtist(id, updateArtistDto);
   }
 
-  delete(id: string): void {
+  async delete(id: string): Promise<Artist> {
     return this.db.deleteArtist(id);
   }
 }

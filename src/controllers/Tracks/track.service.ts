@@ -6,23 +6,23 @@ import { CreateTrackDto, Track } from './interfaces';
 export class TrackService {
   constructor(private readonly db: DbService) {}
 
-  getAll(): Track[] {
+  async getAll(): Promise<Track[]> {
     return this.db.getAllTracks();
   }
 
-  getById(id: string): Track {
+  async getById(id: string): Promise<Track> {
     return this.db.getTrackById(id);
   }
 
-  create(createTrackDto: CreateTrackDto): Track {
+  async create(createTrackDto: CreateTrackDto): Promise<Track> {
     return this.db.createTrack(createTrackDto);
   }
 
-  update(id: string, updateTrackDto: CreateTrackDto): Track {
+  async update(id: string, updateTrackDto: CreateTrackDto): Promise<Track> {
     return this.db.updateTrack(id, updateTrackDto);
   }
 
-  delete(id: string): void {
+  async delete(id: string): Promise<Track> {
     return this.db.deleteTrack(id);
   }
 }

@@ -7,32 +7,52 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Albums {
-  id       String @id
-  name     String @unique
-  year     Int
-  artistId String
+model Users {
+  id        String   @id @default(uuid())
+  login     String
+  password  String
+  version   Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Artists {
-  id     String  @id
-  name   String  @unique
+  id     String  @id @default(uuid())
+  name   String
   grammy Boolean
+
+  albums Albums[]
+  tracks Tracks[]
+
+  favorites Favorites[]
+}
+
+model Albums {
+  id       String  @id @default(uuid())
+  name     String
+  year     Int
+  artistId String?
+  tracks   Tracks[]
+
+  Artist    Artists?     @relation(fields: [artistId], references: [id])
+  favorites Favorites[]
 }
 
 model Tracks {
-  id       String @id
-  name     String @unique
-  artistId String
-  albumId  String
+  id       String  @id @default(uuid())
+  name     String
+  artistId String?
+  albumId  String?
   duration Int
+
+  Artist    Artists?     @relation(fields: [artistId], references: [id])
+  Album     Albums?      @relation(fields: [albumId], references: [id])
+  favorites Favorites[]
 }
 
-model Users {
-  id        String   @id
-  login     String   @unique
-  password  String
-  version   Int
-  createdAt DateTime
-  updatedAt DateTime
+model Favorites {
+  id      String   @id @default("1")
+  artists Artists[]
+  albums  Albums[]
+  tracks  Tracks[]
 }
