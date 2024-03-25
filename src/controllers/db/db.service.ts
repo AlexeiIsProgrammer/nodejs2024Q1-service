@@ -277,9 +277,17 @@ export class DbService {
       updatedAt: new Date(),
     };
 
-    return this.prismaService.users.create({
+    const user = await this.prismaService.users.create({
       data: newUser,
     });
+
+    return {
+      id: user.id,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+      login: user.login,
+      version: user.version,
+    };
   }
 
   async updateUser(
@@ -319,10 +327,18 @@ export class DbService {
       login: user.login,
     };
 
-    return this.prismaService.users.update({
+    const userWithoutPassword = await this.prismaService.users.update({
       where: { id },
       data: updatedUser,
     });
+
+    return {
+      id: userWithoutPassword.id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      login: userWithoutPassword.login,
+      version: userWithoutPassword.version,
+    };
   }
 
   async deleteUser(id: string): Promise<Omit<User, 'password'>> {
@@ -369,7 +385,7 @@ export class DbService {
 
   async getAllFavorites(): Promise<FavoritesResponse> {
     const favorites = await this.prismaService.favorites.findUnique({
-      where: { id: 1 },
+      where: { id: '1' },
       select: { artists: true, albums: true, tracks: true },
     });
 
@@ -397,10 +413,10 @@ export class DbService {
     return await this.prismaService.tracks.update({
       where: { id },
       data: {
-        Favorites: {
+        favorites: {
           connectOrCreate: {
-            where: { id: this.favoriteId },
-            create: { id: this.favoriteId },
+            where: { id: this.favoriteId.toString() },
+            create: { id: this.favoriteId.toString() },
           },
         },
       },
@@ -421,8 +437,8 @@ export class DbService {
     return await this.prismaService.tracks.update({
       where: { id },
       data: {
-        Favorites: {
-          disconnect: { id: this.favoriteId },
+        favorites: {
+          disconnect: { id: this.favoriteId.toString() },
         },
       },
     });
@@ -445,10 +461,10 @@ export class DbService {
     return await this.prismaService.albums.update({
       where: { id },
       data: {
-        Favorites: {
+        favorites: {
           connectOrCreate: {
-            where: { id: this.favoriteId },
-            create: { id: this.favoriteId },
+            where: { id: this.favoriteId.toString() },
+            create: { id: this.favoriteId.toString() },
           },
         },
       },
@@ -469,8 +485,8 @@ export class DbService {
     return await this.prismaService.albums.update({
       where: { id },
       data: {
-        Favorites: {
-          disconnect: { id: this.favoriteId },
+        favorites: {
+          disconnect: { id: this.favoriteId.toString() },
         },
       },
     });
@@ -495,10 +511,10 @@ export class DbService {
     return await this.prismaService.artists.update({
       where: { id },
       data: {
-        Favorites: {
+        favorites: {
           connectOrCreate: {
-            where: { id: this.favoriteId },
-            create: { id: this.favoriteId },
+            where: { id: this.favoriteId.toString() },
+            create: { id: this.favoriteId.toString() },
           },
         },
       },
@@ -521,8 +537,8 @@ export class DbService {
     return await this.prismaService.artists.update({
       where: { id },
       data: {
-        Favorites: {
-          disconnect: { id: this.favoriteId },
+        favorites: {
+          disconnect: { id: this.favoriteId.toString() },
         },
       },
     });
