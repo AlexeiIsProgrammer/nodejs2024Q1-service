@@ -6,26 +6,26 @@ import { DbService } from '../db/db.service';
 export class UserService {
   constructor(private readonly db: DbService) {}
 
-  getAll(): User[] {
+  async getAll(): Promise<User[]> {
     return this.db.getAllUsers();
   }
 
-  getById(id: string): User {
+  async getById(id: string): Promise<User> {
     return this.db.getUserById(id);
   }
 
-  create(createUserDto: CreateUserDto): Omit<User, 'password'> {
+  async create(createUserDto: CreateUserDto): Promise<Omit<User, 'password'>> {
     return this.db.createUser(createUserDto);
   }
 
-  update(
+  async update(
     id: string,
     updatePasswordDto: UpdatePasswordDto,
-  ): Omit<User, 'password'> {
+  ): Promise<Omit<User, 'password'>> {
     return this.db.updateUser(id, updatePasswordDto);
   }
 
-  delete(id: string): void {
+  async delete(id: string): Promise<Omit<User, 'password'>> {
     return this.db.deleteUser(id);
   }
 }

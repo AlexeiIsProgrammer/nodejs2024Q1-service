@@ -1,6 +1,5 @@
 import { Controller, Get, Post, Delete, Param, HttpCode } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
-import { FavoritesResponse } from './interfaces';
 import { StatusCodes } from 'http-status-codes';
 
 @Controller('favs')
@@ -9,7 +8,7 @@ export class FavoritesController {
 
   @Get()
   @HttpCode(StatusCodes.OK)
-  getAll(): FavoritesResponse {
+  getAll() {
     return this.favoritesService.getAll();
   }
 

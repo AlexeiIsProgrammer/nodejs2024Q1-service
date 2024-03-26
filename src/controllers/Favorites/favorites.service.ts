@@ -1,35 +1,39 @@
 import { Injectable } from '@nestjs/common';
 import { DbService } from '../db/db.service';
+import { FavoritesResponse } from './interfaces';
+import { Track } from '../Tracks/interfaces';
+import { Album } from '../Albums/interfaces';
+import { Artist } from '../Artists/interfaces';
 
 @Injectable()
 export class FavoritesService {
   constructor(private readonly db: DbService) {}
 
-  getAll() {
+  async getAll(): Promise<FavoritesResponse> {
     return this.db.getAllFavorites();
   }
 
-  addToFavoritesTrack(id: string) {
-    this.db.addToFavoritesTrack(id);
+  async addToFavoritesTrack(id: string): Promise<Track> {
+    return this.db.addToFavoritesTrack(id);
   }
 
-  removeFromFavoritesTrack(id: string) {
-    this.db.removeFromFavoritesTrack(id);
+  async removeFromFavoritesTrack(id: string): Promise<Track> {
+    return this.db.removeFromFavoritesTrack(id);
   }
 
-  addToFavoritesAlbum(id: string) {
-    this.db.addToFavoritesAlbum(id);
+  async addToFavoritesAlbum(id: string): Promise<Album> {
+    return this.db.addToFavoritesAlbum(id);
   }
 
-  removeFromFavoritesAlbum(id: string) {
-    this.db.removeFromFavoritesAlbum(id);
+  async removeFromFavoritesAlbum(id: string): Promise<Album> {
+    return this.db.removeFromFavoritesAlbum(id);
   }
 
-  addToFavoritesArtist(id: string) {
-    this.db.addToFavoritesArtist(id);
+  async addToFavoritesArtist(id: string): Promise<Artist> {
+    return this.db.addToFavoritesArtist(id);
   }
 
-  removeFromFavoritesArtist(id: string) {
-    this.db.removeFromFavoritesArtist(id);
+  async removeFromFavoritesArtist(id: string): Promise<Artist> {
+    return this.db.removeFromFavoritesArtist(id);
   }
 }
